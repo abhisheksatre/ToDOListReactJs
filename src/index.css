@@ -1,0 +1,18 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+.board{
+	margin: 10px;
+	width: 500px;
+	background-color: #e6e7e8;
+	border-radius: 5px;
+	padding: 2px 0;
+}
+.item{
+	background-color: #FFF;
+	padding: 8px;
+	margin: 10px;
+}
+.item textarea{width: 100%;}
