@@ -13,13 +13,14 @@ class Item extends React.Component{
 	}
 
 	editNote(){
-		this.setState({isEdit: true});
+		this.setState({isEdit: true});	
 	}
 	deleteNote(){
-		alert("delete it");
+		this.props.deleteNoteText(this.props.index);
 	}
 	saveNote(){
 		this.setState({isEdit: false});	
+		this.props.editNoteText(this.props.index, this.refs.noteText.value);
 	}
 
 	render(){
@@ -30,7 +31,7 @@ class Item extends React.Component{
 					</div>);
 
 		const editMode = (<div className="item">
-							<textarea>{this.props.text}</textarea>
+							<textarea ref="noteText">{this.props.text}</textarea>
 							<button className="save" onClick={this.saveNote}>save</button>
 					</div>); 
 		
@@ -43,11 +44,27 @@ class Item extends React.Component{
 }
 
 class Board extends React.Component{
-	render(){
+	constructor(props){
+		super(props);
+		this.state = {notes: ["Google","Woogle","Doogle"]};
+		this.editBoardNote = this.editBoardNote.bind(this);
+		this.deleteBoardNote = this.deleteBoardNote.bind(this);
+	}
 
-		const notes = ["Google Now","Siri","Alexa"];
-		const notesItems = notes.map((note) =>
-			<Item text={note}/>
+	editBoardNote(index, text){
+		var array = this.state.notes;
+		array[index] = text;
+		this.setState({notes : array});
+	}
+	deleteBoardNote(index){
+		var array = this.state.notes;
+		array.splice(index, 1);
+		this.setState({notes : array});
+	}
+
+	render(){
+		const notesItems = this.state.notes.map((note, i) =>
+			<Item key={i} index={i} text={note} editNoteText={this.editBoardNote} deleteNoteText={this.deleteBoardNote} />
 		);
 
 		return (
