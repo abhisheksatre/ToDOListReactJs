@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-
+import $ from "jquery";
 class Item extends React.Component{
 	
 	constructor(props){
@@ -10,10 +10,12 @@ class Item extends React.Component{
 		this.editNote = this.editNote.bind(this);
 		this.deleteNote = this.deleteNote.bind(this);
 		this.saveNote = this.saveNote.bind(this);
+		console.log($(".board div").length);
 	}
 
 	editNote(){
-		this.setState({isEdit: true});	
+		this.setState({isEdit: true});
+		// this.refs.noteText.focus();
 	}
 	deleteNote(){
 		this.props.deleteNoteText(this.props.index);
@@ -31,7 +33,7 @@ class Item extends React.Component{
 					</div>);
 
 		const editMode = (<div className="item">
-							<textarea ref="noteText">{this.props.text}</textarea>
+							<textarea ref="noteText" autoFocus>{this.props.text}</textarea>
 							<button className="save" onClick={this.saveNote}>save</button>
 					</div>); 
 		
@@ -46,20 +48,41 @@ class Item extends React.Component{
 class Board extends React.Component{
 	constructor(props){
 		super(props);
-		this.state = {notes: ["Google","Woogle","Doogle"]};
+		var noteArray = [];
+		if (typeof(Storage) !== "undefined") {
+			var storedData = localStorage.getItem("noteDb").trim();
+			if(storedData !== null && storedData !== ""){
+				noteArray = storedData.split(",");
+			}
+		}
+		this.state = {notes: noteArray};
 		this.editBoardNote = this.editBoardNote.bind(this);
 		this.deleteBoardNote = this.deleteBoardNote.bind(this);
+		this.addNote = this.addNote.bind(this);
+	}
+
+	addNote(){
+		var array = this.state.notes;
+		array.push("New Note");
+		this.setState({notes : array});
+		this.setDb(array);
 	}
 
 	editBoardNote(index, text){
 		var array = this.state.notes;
 		array[index] = text;
 		this.setState({notes : array});
+		this.setDb(array);
 	}
 	deleteBoardNote(index){
 		var array = this.state.notes;
 		array.splice(index, 1);
 		this.setState({notes : array});
+		this.setDb(array);
+	}
+
+	setDb(array){
+		localStorage.setItem("noteDb", array.toString());
 	}
 
 	render(){
@@ -69,6 +92,7 @@ class Board extends React.Component{
 
 		return (
 			<div className="board">
+				<button className="addNote" onClick={this.addNote}>Add Note</button>
 				{notesItems}
 			</div>
 		);
